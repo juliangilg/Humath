@@ -7,6 +7,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from scipy import signal
 from scipy import stats as st
 from scipy.signal import butter,filtfilt
+import neurokit2 as nk
+import matplotlib.pyplot as plt
 
 class anomalydetection_resp(BaseEstimator, TransformerMixin):
     
@@ -124,75 +126,35 @@ class anomalydetection_resp(BaseEstimator, TransformerMixin):
               elif zt.std() < 0.01:
                 self.corru[i*self.Win:(i+1)*self.Win] = 1
                 
+        self.corru[self.corru==0] = np.NaN        
         return self.corru
     
     def fit_transform(self, x, y=None):
         self.fit(x)
         return self.transform(x)
 
-   
-
-class Normalizacion(BaseEstimator, TransformerMixin):
-    
-    """
-        Normalización de series de tiempo.
-
-        Parámetros
-        ----------
-        Method : string
-            Indica el método por el cual se quieren normalizar las series de
-            tiempo. 
-            PicoDC: normalización a partir del valor DC de la señal y de se 
-            valor máximo.
-            Zscore: Normalización a partir de la media y desviación estandard. 
-            Genera series de tiempo cuyos valores de amplitud tienen media 0 y 
-            varianza unitaria.
-        x: arreglo numpy
-            Serie de tiempo
+    def resp_rate(self, x, Fs):
+        try: 
+            signals, info = nk.rsp_process(x, sampling_rate=Fs,  method='biosppy')
+            x_clean = signals['RSP_Clean'].to_numpy()
+            ritmo_rsp = signals['RSP_Rate'].to_numpy()
+            peaks = signals['RSP_Peaks'].to_numpy()
+        except:
+            x_clean = x
+            ritmo_rsp = 20*np.ones(x.shape)
+            peaks = np.zeros(x.shape)
+        
+        peaks[corru==1] = 0
                 
-        Salidas
-        -------
-        x_nor: arreglo numpy 
-            serie de tiempo normalizada
-    """
-    def __init__(self, Method='PicoDC', Plot=False, Fs = 0):
-        self.Method = Method
-        self.Plot = Plot
-        self.Fs = Fs
+        # Se identifica bradipnea. Resp rate < 12
+        brad = np.nan*np.ones(x.shape)
+        brad[ritmo_rsp < 12] = 1
+        brad[corru==1] = np.NaN
         
-    def fit_1(self, x, y = None):
-        if self.Method == 'PicoDC':
-            self.DC = np.mean(x) # se calcula el nivel DC de la señal
-            self.max = np.max(np.abs(x)) # se calcula el valor máximo de la señal
-        elif self.Method == 'Zscore':
-            self.mean_ = np.mean(x)
-            self.std_ = np.std(x)
-            if self.std_ < 1e-9: # para favorecer la estabilidad numérica
-                self.std_ = 1e-9
-        else:
-            raise Exception("El método de normalizacion no esta implementado")
-        return self
-    
-    def fit(self, x, y = None):
-        pass
-
-    def transform(self, x):
-        self.fit_1(x)
-        if self.Method == 'PicoDC':
-            if abs(self.max-self.DC) > 1e-3:
-                x_nor = (x-self.DC)/(self.max-self.DC)
-            else:
-                x_nor = x
-        elif self.Method == 'Zscore':
-            x_nor = (x-self.mean_)/(self.std_)
-        else:
-            raise Exception("El método de normalizacion no esta implementado")
-
-        return x_nor
-    
-    def fit_transform(self, x, y=None):
-        self.fit(x)
-        return self.transform(x)
+        # Se identifica taquipnea. Resp rate > 20
+        taq = np.nan*np.ones(x.shape)
+        taq[ritmo_rsp > 20] = 1
+        taq[corru==1] = np.NaN
         
-    
-
+        return x_clean, peaks, brad, taq
+        
