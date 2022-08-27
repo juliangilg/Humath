@@ -133,7 +133,7 @@ class anomalydetection_resp(BaseEstimator, TransformerMixin):
         self.fit(x)
         return self.transform(x)
 
-    def resp_rate(self, x, Fs):
+    def resp_rate(self, x, corru, Fs):
         try: 
             signals, info = nk.rsp_process(x, sampling_rate=Fs,  method='biosppy')
             x_clean = signals['RSP_Clean'].to_numpy()
