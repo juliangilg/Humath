@@ -135,7 +135,7 @@ class anomalydetection_resp(BaseEstimator, TransformerMixin):
 
     def resp_rate(self, x, corru, Fs):
         try: 
-            signals, info = nk.rsp_process(x, sampling_rate=Fs,  method='biosppy')
+            signals, info = nk.rsp_process(x, sampling_rate=Fs)
             x_clean = signals['RSP_Clean'].to_numpy()
             ritmo_rsp = signals['RSP_Rate'].to_numpy()
             peaks = signals['RSP_Peaks'].to_numpy()
