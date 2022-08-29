@@ -132,16 +132,16 @@ class anomalydetection_pleth(BaseEstimator, TransformerMixin):
                 if  abs(st.mode(zt)[0][0]) >= 0.00:
                   if ((aux_ex - 0) > 0.6*self.Win) & (m/self.Fs > 0.4):
                     self.corru[i*self.Win:(i+1)*self.Win] = 1
-                    print(2)
+                    #print(2)
                   # if (idx != -1) & (m/self.Fs > 0.4) & ((abs(zt[idx] - zt.max()) < 0.05*zt.max()) | (abs(zt[idx] - zt.min()) < 0.05*zt.max())):
                   #   self.corru[i*self.Win:(i+1)*self.Win] = 1
                   #   print(3)
                   elif ((aux_ex - 0) > 0.7*self.Win) & (m/self.Fs > 0.5) & ((abs(st.mode(zt)[0][0]-x.max())<0.1*x.max()) | ((abs(st.mode(zt)[0][0]-x.min())<0.1*x.max()))):
                     self.corru[i*self.Win:(i+1)*self.Win] = 1
-                    print(4)
+                    #print(4)
                   elif (aux_ex - aux_mi) > 0.95*self.Win:
                     self.corru[i*self.Win:(i+1)*self.Win] = 1
-                    print(5)
+                    #print(5)
                   # elif m/self.Fs > 0.4:
                   #   self.corru[i*self.Win:(i+1)*self.Win] = 1
                   #   print(6)
@@ -149,13 +149,14 @@ class anomalydetection_pleth(BaseEstimator, TransformerMixin):
                      self.corru[i*self.Win:(i+1)*self.Win] = 1
                      self.corru_a[i*self.Win:(i+1)*self.Win] = 1
                      aux_corrup += 1
-                     print(8)
+                     #print(8)
           if aux_corrup < 0.4*len(self.x)//self.Win:
             print(aux_corrup)
             self.corru[self.corru_a == 1] = 0
+            
 
             
-              
+        self.corru[self.corru==0] = np.NaN
         return self.corru
     
     def fit_transform(self, x, y=None):
