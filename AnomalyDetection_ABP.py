@@ -11,7 +11,7 @@ from scipy.signal import butter,filtfilt
 from wfdb import processing
 import neurokit2 as nk
 
-class anomalydetection_pleth(BaseEstimator, TransformerMixin):
+class anomalydetection_abp(BaseEstimator, TransformerMixin):
     
     """
         Detección de anomalías en señales de fotopletismografía. La señal, se divide en 
