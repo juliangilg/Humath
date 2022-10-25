@@ -59,7 +59,7 @@ class anomalydetection_ecg(BaseEstimator, TransformerMixin):
         
         if x.std() < 0.01:
           self.corru = np.ones(self.corru.shape)
-          print(7)
+          #print(7)
         else:
           # Se recorren todas las ventanas en la señal x.
           aux_corrup = 0 
@@ -73,7 +73,7 @@ class anomalydetection_ecg(BaseEstimator, TransformerMixin):
               # NaN (not a number).
               if np.sum(np.isnan(zt)):
                 self.corru[i*self.Win:(i+1)*self.Win] = 1
-                print(1)
+                #print(1)
               else: 
 
                 # Se calcula la transformada de Fourier de la ventana y se analiza
@@ -85,10 +85,10 @@ class anomalydetection_ecg(BaseEstimator, TransformerMixin):
                 aux_sp = sp[(freq >= 70) & (freq <= 90)]
                 if np.sum(aux_sp > 0.01) > 0.9*len(aux_sp):
                   self.corru[i*self.Win:(i+1)*self.Win] = 1
-                  print(2,i)
+                  #print(2,i)
                 elif zt.std() <= 0.0001:
                   self.corru[i*self.Win:(i+1)*self.Win] = 1
-                  print(3)
+                  #print(3)
                 else: 
                   # Se calculan las pendientes de los datos, para detectar la anomalía 
                   # donde la amplitud empieza a oscilar arbitraramente
@@ -112,7 +112,7 @@ class anomalydetection_ecg(BaseEstimator, TransformerMixin):
 
                     if (aux_cons > 0.5*self.Win) | (aux_riza > 0.5*self.Win):
                       self.corru[i*self.Win:(i+1)*self.Win] = 1
-                      print(4)
+                      #print(4)
                       break
 
               # Se calcula el histograma de la señal con el fin de identificar 
@@ -124,7 +124,7 @@ class anomalydetection_ecg(BaseEstimator, TransformerMixin):
                 if (hist[0]>0.25*self.Win) | (hist[1]>0.25*self.Win):
                   if (hist[8]>0.25*self.Win) | (hist[9]>0.25*self.Win):
                     self.corru[i*self.Win:(i+1)*self.Win] = 1
-                    print(5)
+                    #print(5)
               
         return self.corru
     
