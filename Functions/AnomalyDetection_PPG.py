@@ -19,7 +19,7 @@ from scipy.signal import butter,filtfilt
 class anomalydetection_ppg(BaseEstimator, TransformerMixin):
     
     """
-        Detección de anomalías en señales de fotopletismografía. La señal, 
+        Detección de zonas inválidas en señales de fotopletismografía. La señal, 
         se divide en ventanas de duración "Tenvt" segundos y se analiza su 
         comportamiento estadístico con el fin de detectar si existen datos 
         inválidos.
@@ -122,5 +122,39 @@ class anomalydetection_ppg(BaseEstimator, TransformerMixin):
     def fit_transform(self, x, y=None):
         self.fit(x)
         return self.transform(x)
+        
+    def heart_rate(self, x, corru, Fs):
+        try: 
+            signals, info = nk.ppg_process(x, sampling_rate=Fs)
+            x_clean = signals['PPG_Clean'].to_numpy()
+            peaks = signals['PPG_Peaks'].to_numpy()
+        except:
+            x_clean = nk.ppg_clean(x)
+            peaks_ = processing.find_local_peaks(x, 10)
+            peaks = np.zeros(x.shape)
+            if len(peaks_) !=0:
+              peaks[peaks_] = 1
+              
+        corrected_peak_inds = np.where(peaks == 1)[0]
+        ritmo_ppg = processing.compute_hr(len(x), corrected_peak_inds, Fs)
+
+
+        peaks[corru==1] = 0
+        t_peak = corrected_peak_inds
+        x_peak = x[corrected_peak_inds]
+        
+        
+                
+        # Se identifica bradipnea. Resp rate < 12
+        brad = np.nan*np.ones(x.shape)
+        brad[ritmo_ppg < 40] = 1
+        brad[corru==1] = np.NaN
+        
+        # Se identifica taquipnea. Resp rate > 20
+        taq = np.nan*np.ones(x.shape)
+        taq[ritmo_ppg > 140] = 1
+        taq[corru==1] = np.NaN
+        
+        return x_clean, peaks, brad, taq
 
         
