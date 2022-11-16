@@ -153,6 +153,5 @@ class caracterizacion(BaseEstimator, TransformerMixin):
         
         for idx in Auxidx:
             Npeaks = len(np.where((peaks>=idx[0]) & (peaks<=idx[1]))[0])
-        if len(Npeaks) == 0:
-            Npeaks = [0, 0, 0]
+        
         return(np.array(Npeaks))
