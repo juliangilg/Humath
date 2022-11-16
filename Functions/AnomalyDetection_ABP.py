@@ -112,7 +112,7 @@ class anomalydetection_abp(BaseEstimator, TransformerMixin):
               # 1.la ventana se denomina corrupta si existe al menos un valor NaN (not a number).
               if np.sum(np.isnan(zt)):
                 self.corru[i*self.Win:(i+1)*self.Win] = 1
-                print(1)
+                #print(1)
               else: 
                 # Si no hay datos NaN, se aplica un filtro pasa bajas con el fin de eliminar
                 # componentes ruidos de alta frecuencia.
@@ -154,7 +154,7 @@ class anomalydetection_abp(BaseEstimator, TransformerMixin):
                      aux_corrup += 1
                      #print(8)
           if aux_corrup < 0.4*len(self.x)//self.Win:
-            print(aux_corrup)
+            #print(aux_corrup)
             self.corru[self.corru_a == 1] = 0
             
 
