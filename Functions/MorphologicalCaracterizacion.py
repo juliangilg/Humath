@@ -9,7 +9,7 @@ from scipy.stats import norm, kurtosis, skew
 from sklearn.base import BaseEstimator, TransformerMixin
 
 
-class caracterizacion(BaseEstimator, TransformerMixin):
+class caracterizacion_1(BaseEstimator, TransformerMixin):
     
     """
         Caracterización de series de tiempo a partir de descriptores fisiológicos
@@ -90,6 +90,8 @@ class caracterizacion(BaseEstimator, TransformerMixin):
             HR.append(60*B/delta)
             idx1 += 1
             idx2 = idx1 + B
+        if len(HR) == 0:
+          HR.append(0)
         return np.array(HR)
 
     def ComputeConBeat(self, HR, peaks, um, mayor):
@@ -153,5 +155,4 @@ class caracterizacion(BaseEstimator, TransformerMixin):
         
         for idx in Auxidx:
             Npeaks = len(np.where((peaks>=idx[0]) & (peaks<=idx[1]))[0])
-        
         return(np.array(Npeaks))
