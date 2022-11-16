@@ -9,7 +9,7 @@ from scipy.stats import norm, kurtosis, skew
 from sklearn.base import BaseEstimator, TransformerMixin
 
 
-class caracterizacion_1(BaseEstimator, TransformerMixin):
+class caracterizacion(BaseEstimator, TransformerMixin):
     
     """
         Caracterización de series de tiempo a partir de descriptores fisiológicos
