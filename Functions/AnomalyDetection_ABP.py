@@ -16,7 +16,7 @@ from scipy import signal
 from scipy import stats as st
 from scipy.signal import butter,filtfilt
 
-class anomalydetection_ppg(BaseEstimator, TransformerMixin):
+class anomalydetection_abp(BaseEstimator, TransformerMixin):
     
     """
         Detección de zonas inválidas en señales de fotopletismografía. La señal, 
