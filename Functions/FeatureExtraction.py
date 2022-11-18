@@ -95,8 +95,7 @@ class featureextraction(BaseEstimator, TransformerMixin):
         corruptos.
     """
 
-    X['label'] = y
-    names = X.columns[:-1] # tipo de señales a procesar
+    names = X.columns # tipo de señales a procesar
 
     X_t = []
     Y_t = []
@@ -106,9 +105,9 @@ class featureextraction(BaseEstimator, TransformerMixin):
       Anomaly = self.anomaly(names) 
       car = self.car
 
-      sig_  = X[[nam, 'label']]
-      x_sig = sig_[nam]
-      y_sig = sig_['label'].to_numpy()
+      
+      x_sig = X[nam]
+      y_sig = y
       
       aux  = 0
       X_   = np.zeros((len(x_sig), 14))
