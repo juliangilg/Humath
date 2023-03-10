@@ -117,8 +117,11 @@ class ArritmiaDetection(BaseEstimator, ClassifierMixin):
       
       # Se efectúa la predicción únicamente para las señales válidas.
       idx_  = np.where(C_ < 0.7)[0]
-      X_aux = X_[idx_, :]
-      pred_[idx_, j] = self.Cl[j].predict(X_aux)
+      if len(idx_) != 0:
+        X_aux = X_[idx_, :]
+        pred_[idx_, j] = self.Cl[j].predict(X_aux)
+      else: 
+        pred_[idx_, j] = 0
       self.w_[:, j] = 1 - C_ # los pesos para la ponderación. Nótese que es el 
                              # complemento de la proporción de regiones con datos
                              # anómalos; así que una señal con menos regiones corruptas
